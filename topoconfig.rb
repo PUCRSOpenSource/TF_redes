@@ -83,13 +83,44 @@ end
 
 if __FILE__ == $0
 	# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
-	file = File.new(ARGV.first, "r")
-	type = ""
-	while (line = file.gets)
-    	puts line
+
+	counter = 0
+	File.open ARGV.first, "r" do |f|
+		f.each_line do |line|
+			if line[0] == "#"
+				counter += 1
+				next
+			end
+			line         = line.split ','
+			case counter
+			when 1 #when reading node
+				node = Node.new
+				node.name    = line[0]
+				node.mac     = line[1]
+				ip           = line[2].split '/'
+				node.ip      =   ip[0]
+				node.prefix  =   ip[1].to_i
+				node.gateway = line[3]
+			when 2 #when reading router
+				router       = Router.new
+				router_ports = Array.new
+				router.name  = line[0]
+				port_counter = 2
+				line[1].to_i.times do |x|
+					router_port         = RouterPort.new
+					router_port.mac     = line[port_counter]
+					ip                  = line[port_counter + 1].split '/'
+					router_port.ip      = ip[0]
+					router_port.prefix  = ip[1].to_i
+					router_ports << router_port
+					port_counter       += 2
+				end
+				router.ports = router_ports
+			when 3 #when reading routertable
+				#TODO
+			end
+		end
 	end
-	file.close
-	puts ip_dictionary
 
 	create_dummy_stuff
 end
