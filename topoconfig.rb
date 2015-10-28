@@ -84,9 +84,28 @@ end
 if __FILE__ == $0
 	# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
 
+	counter = 0
 	File.open ARGV.first, "r" do |f|
 		f.each_line do |line|
-			puts line
+			if line[0] == "#"
+				counter += 1
+				next
+			end
+			case counter
+			when 1 #when reading node
+				line = line.split ','
+				node = Node.new
+				node.name    = line[0]
+				node.mac     = line[1]
+				ip           = line[2].split '/'
+				node.ip      = ip[0]
+				node.prefix  = ip[1]
+				node.gateway = line[3]
+			when 2 #when reading router
+				puts line
+			when 3 #when reading routertable
+				puts line
+			end
 		end
 	end
 
