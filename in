@@ -8,3 +8,11 @@ r1,2,00:00:00:00:00:05,192.168.0.1/24,00:00:00:00:00:06,192.168.1.1/24
 #ROUTERTABLE
 r1,192.168.0.0/24,0.0.0.0,0
 r1,192.168.1.0/24,0.0.0.0,1
+
+EXPLICACAO DO QUE SAO OS NEGOCIO!@!!
+#NODE
+<node_name>,<MAC>,<IP/prefix>,<gateway>
+#ROUTER
+<router_name>,<num_ports>,<MAC0>,<IP0/prefix>,<MAC1>,<IP1/prefix>,<MAC2>,<IP2/prefix> …
+#ROUTERTABLE
+<router_name>,<net_dest/prefix>,<nexthop>,<port>
