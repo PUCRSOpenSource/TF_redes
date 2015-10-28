@@ -83,13 +83,12 @@ end
 
 if __FILE__ == $0
 	# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
-	file = File.new(ARGV.first, "r")
-	type = ""
-	while (line = file.gets)
-    	puts line
+
+	File.open ARGV.first, "r" do |f|
+		f.each_line do |line|
+			puts line
+		end
 	end
-	file.close
-	puts ip_dictionary
 
 	create_dummy_stuff
 end
