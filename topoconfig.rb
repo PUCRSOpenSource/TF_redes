@@ -91,20 +91,33 @@ if __FILE__ == $0
 				counter += 1
 				next
 			end
+			line         = line.split ','
 			case counter
 			when 1 #when reading node
-				line = line.split ','
 				node = Node.new
 				node.name    = line[0]
 				node.mac     = line[1]
 				ip           = line[2].split '/'
-				node.ip      = ip[0]
-				node.prefix  = ip[1]
+				node.ip      =   ip[0]
+				node.prefix  =   ip[1].to_i
 				node.gateway = line[3]
 			when 2 #when reading router
-				puts line
+				router       = Router.new
+				router_ports = Array.new
+				router.name  = line[0]
+				port_counter = 2
+				line[1].to_i.times do |x|
+					router_port         = RouterPort.new
+					router_port.mac     = line[port_counter]
+					ip                  = line[port_counter + 1].split '/'
+					router_port.ip      = ip[0]
+					router_port.prefix  = ip[1].to_i
+					router_ports << router_port
+					port_counter       += 2
+				end
+				router.ports = router_ports
 			when 3 #when reading routertable
-				puts line
+				#TODO
 			end
 		end
 	end
