@@ -7,44 +7,44 @@ def dec_to_addr num
 end
 
 class Node
-	attr_accessor :name 		#node name
-	attr_accessor :mac			#node mac address
-	attr_accessor :ip			#node ip adress
-	attr_accessor :prefix		#node ip address prefix, works as a mask to get net address from ip
-								#example: ip address 10.0.0.1
-								# 		  prefix /24 (10.0.0.1/24)
-								# 		  net address = 10.0.0.1 && 255.255.255.0 = 10.0.0.0
-	attr_accessor :gateway		#router connected to this node
-	attr_accessor :arp_table	#node's arp table (known mac addresses from ip adressess)
+	attr_accessor :name       #node name
+	attr_accessor :mac        #node mac address
+	attr_accessor :ip         #node ip adress
+	attr_accessor :prefix     #node ip address prefix, works as a mask to get net address from ip
+                            #example: ip address 10.0.0.1
+                            #       prefix /24 (10.0.0.1/24)
+                            #       net address = 10.0.0.1 && 255.255.255.0 = 10.0.0.0
+	attr_accessor :gateway    #router connected to this node
+	attr_accessor :arp_table  #node's arp table (known mac addresses from ip adressess)
 end
 
 class RouterPort
-	attr_accessor :number		#port number
-	attr_accessor :mac			#port mac address
-	attr_accessor :ip			#port ip address
-	attr_accessor :prefix		#port ip address prefix
+	attr_accessor :number     #port number
+	attr_accessor :mac        #port mac address
+	attr_accessor :ip         #port ip address
+	attr_accessor :prefix     #port ip address prefix
 end
 
 class Router
-	attr_accessor :name			#name
-	attr_accessor :ports		#list of router ports
-	attr_accessor :arp_table	#router's arp table
+	attr_accessor :name       #name
+	attr_accessor :ports      #list of router ports
+	attr_accessor :arp_table  #router's arp table
 end
 
 class RouterTableEntry
-	attr_accessor :name			#router name
-	attr_accessor :net_dest		#network destination. the network this entry is explaining how to get to
-	attr_accessor :prefix		#network destination prefix
-	attr_accessor :next_hop		#next router to access when looking for this network (0.0.0.0 if accessable from this address)
-	attr_accessor :port 		#port that have access to this network
+	attr_accessor :name       #router name
+	attr_accessor :net_dest   #network destination. the network this entry is explaining how to get to
+	attr_accessor :prefix     #network destination prefix
+	attr_accessor :next_hop   #next router to access when looking for this network (0.0.0.0 if accessable from this address)
+	attr_accessor :port       #port that have access to this network
 end
 
 class RouterTable
-	attr_accessor :entry_list	#list of entries
+	attr_accessor :entry_list #list of entries
 end
 
 class ArpTable
-	attr_accessor :ip_to_mac 	#dictionary with ips as keys and mac addresses as values known by this element
+	attr_accessor :ip_to_mac  #dictionary with ips as keys and mac addresses as values known by this element
 end
 
 ip_dictionary = Hash.new()
