@@ -6,6 +6,12 @@ def dec_to_addr num
   [24, 16, 8, 0].collect { |b| (num >> b) & 255 }.join('.')
 end
 
+def addr_to_network(ip,prefix)
+	addr_dec = addr_to_dec ip
+	net_dec = (0xFFFFFFFF << (32 - prefix)) & addr_dec
+	dec_to_addr net_dec
+end
+
 class Node
 	attr_accessor :name       #node name
 	attr_accessor :mac        #node mac address
@@ -19,7 +25,6 @@ class Node
 end
 
 class RouterPort
-	attr_accessor :number     #port number
 	attr_accessor :mac        #port mac address
 	attr_accessor :ip         #port ip address
 	attr_accessor :prefix     #port ip address prefix
@@ -47,6 +52,8 @@ class ArpTable
 	attr_accessor :ip_to_mac  #dictionary with ips as keys and mac addresses as values known by this element
 end
 
+
+
 ip_dictionary = Hash.new()
 
 def create_dummy_stuff
@@ -73,13 +80,6 @@ def create_dummy_stuff
 
 end
 
-def ping(ip1, ip2)
-
-end
-
-def traceroute(ip1, ip2)
-
-end
 
 if __FILE__ == $0
 	# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
