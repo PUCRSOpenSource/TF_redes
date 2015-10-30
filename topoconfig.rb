@@ -62,23 +62,23 @@ end
 ip_dictionary = Hash.new
 
 def create_dummy_stuff
-	node = Node.new()
+	node = Node.new
 	node.name = "node1"
 	node.mac = 1
 	node.ip = "192.168.10.2"
 	node.prefix = 24
 	node.gateway = "192.168.0.1"
 
-	router = Router.new()
+	router = Router.new
 	router.name = "router1"
 
-	port = RouterPort.new()
+	port = RouterPort.new
 	port.number = 1
 	port.mac = 2
 	port.ip = "192.168.0.1"
 	port.prefix = 24
 
-	router.ports = Array.new()
+	router.ports = Array.new
 	router.ports << port
 
 	ip_dictionary = {node.ip => node, port.ip => router}
