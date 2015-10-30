@@ -59,7 +59,7 @@ end
 
 
 
-ip_dictionary = Hash.new()
+ip_dictionary = Hash.new
 
 def create_dummy_stuff
 	node = Node.new()
