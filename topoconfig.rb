@@ -35,7 +35,7 @@ class RouterPort
 	attr_accessor :prefix     #port ip address prefix
 
 	def to_s
-		"#{mac},#{ip}/#{prefix}" #WHY DOES IT WORK WITHOUT @ BEFORE ATTRIBUTE NAME???????
+		"#{mac},#{ip}/#{prefix}"
 	end
 end
 
@@ -45,7 +45,7 @@ class Router
 	attr_accessor :arp_table  #router's arp table
 
 	def to_s
-		"#{name},#{ports.size},#{ports.join ','}" #WHY DOES IT WORK WITHOUT @ BEFORE ATTRIBUTE NAME???????
+		"#{name},#{ports.size},#{ports.join ','}"
 	end
 end
 
@@ -57,7 +57,7 @@ class RouterTableEntry
 	attr_accessor :port       #port that have access to this network
 
 	def to_s
-		"#{name},#{net_dest}/#{prefix},#{next_hop},#{port}" #WHY DOES IT WORK WITHOUT @ BEFORE ATTRIBUTE NAME???????
+		"#{name},#{net_dest}/#{prefix},#{next_hop},#{port}"
 	end
 end
 
@@ -69,7 +69,7 @@ class RouterTable
 	end
 
 	def to_s
-		"#{entry_list.join}" #WHY DOES IT WORK WITHOUT @ BEFORE ATTRIBUTE NAME??? AND ALSO PRINTS BEAUTIFULLY IN A NEW LINE??????
+		"#{entry_list.join}" #WHY DOES IT PRINT BEAUTIFULLY IN A NEW LINES??????
 	end
 end
 
