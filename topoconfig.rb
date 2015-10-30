@@ -103,7 +103,7 @@ if __FILE__ == $0
 				counter += 1
 				next
 			end
-			line         = line.split ','
+			line = line.split ','
 			case counter
 			when 1 #when reading node
 				node = Node.new
@@ -123,15 +123,21 @@ if __FILE__ == $0
 					router_port         = RouterPort.new
 					router_port.mac     = line[port_counter]
 					ip                  = line[port_counter + 1].split '/'
-					router_port.ip      = ip[0]
-					router_port.prefix  = ip[1].to_i
-					router_ports << router_port
+					router_port.ip      =   ip[0]
+					router_port.prefix  =   ip[1].to_i
+					router_ports       << router_port
 					port_counter       += 2
 				end
 				router.ports = router_ports
 				puts router.to_s
 			when 3 #when reading routertable
-				#TODO
+				rte          = RouterTableEntry.new
+				rte.name     = line[0]
+				ip           = line[1].split '/'
+				rte.net_dest =   ip[0]
+				rte.prefix   =   ip[1]
+				rte.next_hop = line[2]
+				rte.port     = line[3]
 			end
 		end
 	end
