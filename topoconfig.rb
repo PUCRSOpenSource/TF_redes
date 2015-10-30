@@ -55,10 +55,22 @@ class RouterTableEntry
 	attr_accessor :prefix     #network destination prefix
 	attr_accessor :next_hop   #next router to access when looking for this network (0.0.0.0 if accessable from this address)
 	attr_accessor :port       #port that have access to this network
+
+	def to_s
+		"#{name},#{net_dest}/#{prefix},#{next_hop},#{port}"
+	end
 end
 
 class RouterTable
 	attr_accessor :entry_list #list of entries
+
+	def initialize
+		@entry_list = Array.new
+	end
+
+	def to_s
+		"#{entry_list.join}"
+	end
 end
 
 class ArpTable
@@ -98,6 +110,7 @@ if __FILE__ == $0
 
 	counter = 0
 	File.open ARGV.first, "r" do |f|
+		rt = RouterTable.new
 		f.each_line do |line|
 			if line[0] == "#"
 				counter += 1
@@ -138,8 +151,10 @@ if __FILE__ == $0
 				rte.prefix   =   ip[1]
 				rte.next_hop = line[2]
 				rte.port     = line[3]
+				rt.entry_list << rte
 			end
 		end
+		puts rt.to_s
 	end
 
 	#create_dummy_stuff
