@@ -6,7 +6,7 @@ def dec_to_addr num
   [24, 16, 8, 0].collect { |b| (num >> b) & 255 }.join('.')
 end
 
-def addr_to_network(ip,prefix)
+def addr_to_network ip, prefix
 	addr_dec = addr_to_dec ip
 	net_dec = (0xFFFFFFFF << (32 - prefix)) & addr_dec
 	dec_to_addr net_dec
@@ -82,7 +82,6 @@ def create_dummy_stuff
 	router.ports << port
 
 	ip_dictionary = {node.ip => node, port.ip => router}
-
 end
 
 
