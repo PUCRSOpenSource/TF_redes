@@ -24,7 +24,7 @@ class Node
 	attr_accessor :arp_table  #node's arp table (known mac addresses from ip adressess)
 
 	def to_s
-		"#{name},#{mac},#{ip}/#{prefix},#{gateway}" #WHY DOES IT WORK WITHOUT @ BEFORE ATTRIBUTE NAME???????
+		"#{name},#{mac},#{ip}/#{prefix},#{gateway}"
 	end
 
 end
