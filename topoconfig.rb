@@ -22,6 +22,11 @@ class Node
 	                          #       net address = 10.0.0.1 && 255.255.255.0 = 10.0.0.0
 	attr_accessor :gateway    #router connected to this node
 	attr_accessor :arp_table  #node's arp table (known mac addresses from ip adressess)
+
+	def to_s
+		"#{name},#{mac},#{ip}/#{prefix},#{gateway}"
+	end
+
 end
 
 class RouterPort
@@ -101,6 +106,7 @@ if __FILE__ == $0
 				node.ip      =   ip[0]
 				node.prefix  =   ip[1].to_i
 				node.gateway = line[3]
+				puts node.to_s
 			when 2 #when reading router
 				router       = Router.new
 				router_ports = Array.new
@@ -122,5 +128,5 @@ if __FILE__ == $0
 		end
 	end
 
-	create_dummy_stuff
+	#create_dummy_stuff
 end
