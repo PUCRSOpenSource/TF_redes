@@ -33,12 +33,20 @@ class RouterPort
 	attr_accessor :mac        #port mac address
 	attr_accessor :ip         #port ip address
 	attr_accessor :prefix     #port ip address prefix
+
+	def to_s
+		"#{mac},#{ip}/#{prefix}"
+	end
 end
 
 class Router
 	attr_accessor :name       #name
 	attr_accessor :ports      #list of router ports
 	attr_accessor :arp_table  #router's arp table
+
+	def to_s
+		"#{name},#{ports.size},#{ports.join ','}"
+	end
 end
 
 class RouterTableEntry
@@ -121,6 +129,7 @@ if __FILE__ == $0
 					port_counter       += 2
 				end
 				router.ports = router_ports
+				puts router.to_s
 			when 3 #when reading routertable
 				#TODO
 			end
