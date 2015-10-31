@@ -1,83 +1,12 @@
-def addr_to_dec addr
-  addr.split('.').inject(0) { |total,value| (total << 8 ) + value.to_i }
-end
 
-def dec_to_addr num
-  [24, 16, 8, 0].collect { |b| (num >> b) & 255 }.join('.')
-end
+require_relative 'ip'
+require_relative 'node'
+require_relative 'router'
+require_relative 'router_port'
+require_relative 'router_table'
+require_relative 'router_table_entry'
 
-def addr_to_network ip, prefix
-	addr_dec = addr_to_dec ip
-	net_dec = (0xFFFFFFFF << (32 - prefix)) & addr_dec
-	dec_to_addr net_dec
-end
-
-class Node
-	attr_accessor :name       #node name
-	attr_accessor :mac        #node mac address
-	attr_accessor :ip         #node ip adress
-	attr_accessor :prefix     #node ip address prefix, works as a mask to get net address from ip
-	                          #example: ip address 10.0.0.1
-	                          #       prefix /24 (10.0.0.1/24)
-	                          #       net address = 10.0.0.1 && 255.255.255.0 = 10.0.0.0
-	attr_accessor :gateway    #router connected to this node
-	attr_accessor :arp_table  #node's arp table (known mac addresses from ip adressess)
-
-	def to_s
-		"#{name},#{mac},#{ip}/#{prefix},#{gateway}"
-	end
-
-end
-
-class RouterPort
-	attr_accessor :mac        #port mac address
-	attr_accessor :ip         #port ip address
-	attr_accessor :prefix     #port ip address prefix
-
-	def to_s
-		"#{mac},#{ip}/#{prefix}"
-	end
-end
-
-class Router
-	attr_accessor :name       #name
-	attr_accessor :ports      #list of router ports
-	attr_accessor :arp_table  #router's arp table
-
-	def to_s
-		"#{name},#{ports.size},#{ports.join ','}"
-	end
-end
-
-class RouterTableEntry
-	attr_accessor :name       #router name
-	attr_accessor :net_dest   #network destination. the network this entry is explaining how to get to
-	attr_accessor :prefix     #network destination prefix
-	attr_accessor :next_hop   #next router to access when looking for this network (0.0.0.0 if accessable from this address)
-	attr_accessor :port       #port that have access to this network
-
-	def to_s
-		"#{name},#{net_dest}/#{prefix},#{next_hop},#{port}"
-	end
-end
-
-class RouterTable
-	attr_accessor :entry_list #list of entries
-
-	def initialize
-		@entry_list = Array.new
-	end
-
-	def to_s
-		"#{entry_list.join}" #WHY DOES IT PRINT BEAUTIFULLY IN A NEW LINES??????
-	end
-end
-
-class ArpTable
-	attr_accessor :ip_to_mac  #dictionary with ips as keys and mac addresses as values known by this element
-end
-
-
+include Ip
 
 ip_dictionary = Hash.new
 
@@ -105,57 +34,57 @@ def create_dummy_stuff
 end
 
 
-if __FILE__ == $0
-	# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
+# ip_dictionary = initialize a dictionary with all the existing ips being the keys and the objects related to it being the values
 
-	counter = 0
-	File.open ARGV.first, "r" do |f|
-		rt = RouterTable.new
-		f.each_line do |line|
-			if line[0] == "#"
-				counter += 1
-				next
-			end
-			line = line.split ','
-			case counter
-			when 1 #when reading node
-				node = Node.new
-				node.name    = line[0]
-				node.mac     = line[1]
-				ip           = line[2].split '/'
-				node.ip      =   ip[0]
-				node.prefix  =   ip[1].to_i
-				node.gateway = line[3]
-				puts node.to_s
-			when 2 #when reading router
-				router       = Router.new
-				router_ports = Array.new
-				router.name  = line[0]
-				port_counter = 2
-				line[1].to_i.times do |x|
-					router_port         = RouterPort.new
-					router_port.mac     = line[port_counter]
-					ip                  = line[port_counter + 1].split '/'
-					router_port.ip      =   ip[0]
-					router_port.prefix  =   ip[1].to_i
-					router_ports       << router_port
-					port_counter       += 2
-				end
-				router.ports = router_ports
-				puts router.to_s
-			when 3 #when reading routertable
-				rte          = RouterTableEntry.new
-				rte.name     = line[0]
-				ip           = line[1].split '/'
-				rte.net_dest =   ip[0]
-				rte.prefix   =   ip[1]
-				rte.next_hop = line[2]
-				rte.port     = line[3]
-				rt.entry_list << rte
-			end
+puts dec_to_addr addr_to_dec '192.168.0.1'
+
+counter = 0
+File.open ARGV.first, "r" do |f|
+	rt = RouterTable.new
+	f.each_line do |line|
+		if line[0] == "#"
+			counter += 1
+			next
 		end
-		puts rt.to_s
+		line = line.split ','
+		case counter
+		when 1 #when reading node
+			node = Node.new
+			node.name    = line[0]
+			node.mac     = line[1]
+			ip           = line[2].split '/'
+			node.ip      =   ip[0]
+			node.prefix  =   ip[1].to_i
+			node.gateway = line[3]
+			puts node.to_s
+		when 2 #when reading router
+			router       = Router.new
+			router_ports = Array.new
+			router.name  = line[0]
+			port_counter = 2
+			line[1].to_i.times do |x|
+				router_port         = RouterPort.new
+				router_port.mac     = line[port_counter]
+				ip                  = line[port_counter + 1].split '/'
+				router_port.ip      =   ip[0]
+				router_port.prefix  =   ip[1].to_i
+				router_ports       << router_port
+				port_counter       += 2
+			end
+			router.ports = router_ports
+			puts router.to_s
+		when 3 #when reading routertable
+			rte          = RouterTableEntry.new
+			rte.name     = line[0]
+			ip           = line[1].split '/'
+			rte.net_dest =   ip[0]
+			rte.prefix   =   ip[1]
+			rte.next_hop = line[2]
+			rte.port     = line[3]
+			rt.entry_list << rte
+		end
 	end
-
-	#create_dummy_stuff
+	puts rt.to_s
 end
+
+#create_dummy_stuff
