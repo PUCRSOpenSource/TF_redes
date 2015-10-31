@@ -1,10 +1,10 @@
 
-require_relative 'ip'
-require_relative 'node'
-require_relative 'router'
-require_relative 'router_port'
-require_relative 'router_table'
-require_relative 'router_table_entry'
+require_relative 'modules/ip'
+require_relative 'classes/node'
+require_relative 'classes/router'
+require_relative 'classes/router_port'
+require_relative 'classes/router_table'
+require_relative 'classes/router_table_entry'
 
 include Ip
 
