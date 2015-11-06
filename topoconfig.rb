@@ -63,6 +63,6 @@ File.open ARGV.first, "r" do |f|
 	manager.graph_nodes = graph_nodes
 	manager.router_table = rt
 	manager.generate_graph
-	manager.ping "192.168.0.2", "192.168.1.2"
+	manager.ping "192.168.0.2", "192.168.1.3"
 end
 

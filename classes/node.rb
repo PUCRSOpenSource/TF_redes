@@ -18,51 +18,41 @@ class Node
 	end
 
 	def send_message ip_dest
-		if !arp_table.has_key?(ip_dest)
-			arp_request ip_dest
-		end
-		puts arp_table[ip_dest]
-	end
-
-	def arp_request ip_dest
-		puts "ARP_REQUEST|#{mac},FF:FF:FF:FF:FF:FF|#{ip},#{ip_dest}"
-		# Find Destination
-		network = addr_to_network ip_dest, prefix
+		dest_network = addr_to_network ip_dest, prefix
 		my_network = addr_to_network ip, prefix
 
-		if network != my_network
-			destination = find_neighboor gateway
-			dest_port = destination.get_port gateway
+		if dest_network == my_network
+			destination = ip_dest
 		else
-			neighbors.each do |neigh|
-				if neigh.is_a? Node
-					if neigh.ip == ip_dest
-						destination = neigh
-					end
-				end
-			end
+			destination = gateway
 		end
-		destination.arp_reply self, dest_port
+
+		if !arp_table.has_key?(destination)
+			send_arp_request destination
+		end
+		puts arp_table[destination]
 	end
 
-	def arp_reply origin, port
+	def send_arp_request ip_dest
+		puts "ARP_REQUEST|#{mac},FF:FF:FF:FF:FF:FF|#{ip},#{ip_dest}"
+		neighbors.each do |neighbor|
+			neighbor.receive_arp_request self, ip_dest
+		end
+	end
+
+	def receive_arp_request origin, ip_dest
+		if ip == ip_dest
+			send_arp_reply origin
+		end
+	end
+
+	def send_arp_reply origin
 		puts "ARP_REPLY|#{mac},#{origin.mac}|#{ip},#{origin.ip}"
-		origin.arp_table[ip] = mac
+		origin.receive_arp_reply self
 	end
 
-	def find_neighboor ip
-		neighbors.each do |neigh|
-			if neigh.is_a? Node
-				if neigh.ip == ip
-					return neigh
-				end
-			else
-				if neigh.has_ip ip
-					return neigh
-				end
-			end
-		end
-		return nil
+	def receive_arp_reply origin
+		arp_table[origin.ip] = origin.mac
 	end
 
 end

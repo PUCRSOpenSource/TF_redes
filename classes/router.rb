@@ -10,12 +10,16 @@ class Router
 		"#{name},#{ports.size},#{ports.join ','}"
 	end
 
-	def arp_request ip
+	def receive_arp_request origin, ip_dest
+		if has_ip ip_dest
+			port = get_port ip_dest
+			send_arp_reply port, origin
+		end
 	end
 
-	def arp_reply origin, port
+	def send_arp_reply port, origin
 		puts "ARP_REPLY|#{port.mac},#{origin.mac}|#{port.ip},#{origin.ip}"
-		origin.arp_table[port.ip] = port.mac	
+		origin.receive_arp_reply port
 	end
 
 	def has_ip ip
