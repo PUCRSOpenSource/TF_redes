@@ -32,7 +32,24 @@ class Node
 			send_arp_request destination
 		end
 
-		send_icmp_request arp_table[destination], ip_dest
+		send_icmp_request ip, ip_dest, arp_table[destination]
+	end
+
+	def send_message_back ip_dest
+		dest_network = addr_to_network ip_dest, prefix
+		my_network = addr_to_network ip, prefix
+
+		if dest_network == my_network
+			destination = ip_dest
+		else
+			destination = gateway
+		end
+
+		if !arp_table.has_key?(destination)
+			send_arp_request destination
+		end
+
+		send_icmp_reply ip, ip_dest, arp_table[destination]
 	end
 
 	# ARP
@@ -57,27 +74,30 @@ class Node
 
 	def receive_arp_reply origin
 		arp_table[origin.ip] = origin.mac
+		origin.arp_table[ip] = mac
 	end
 
 	# ICMP
 
-	def send_icmp_request mac_next, ip_final
-		puts "ICMP_REQUEST|#{mac},#{mac_next}|#{ip},#{ip_final}"
+	def send_icmp_request ip_origin, ip_final, mac_next
+		puts "ICMP_REQUEST|#{mac},#{mac_next}|#{ip_origin},#{ip_final}"
 		destination = find_neighboor mac_next
-		puts destination
-		destination.receive_icmp_request self, ip_final
+		destination.receive_icmp_request ip_origin, ip_final
 	end
 
-	def receive_icmp_request origin, ip_final
+	def receive_icmp_request ip_origin, ip_final
 		if ip == ip_final
-			puts "é nos"
+			send_message_back ip_origin
 		end
 	end
 
-	def send_icmp_reply
+	def send_icmp_reply ip_origin, ip_final, mac_next
+		puts "ICMP_REPLY|#{mac},#{mac_next}|#{ip_origin},#{ip_final}"
+		destination = find_neighboor mac_next
+		destination.receive_icmp_reply ip_origin, ip_final
 	end
 
-	def receive_icmp_reply
+	def receive_icmp_reply ip_origin, ip_final
 	end
 
 	# Auxiliar Functions
