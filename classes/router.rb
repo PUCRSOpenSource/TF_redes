@@ -31,24 +31,36 @@ class Router
 
 		# check arp table
 		if !arp_table.has_key?(next_ip)
-			puts "é nos"
-			# send_arp_request destination
+			send_arp_request port, next_ip
 		end
 
 	end
 
 	# ARP
 
-	def receive_arp_request origin, ip_dest
+	def send_arp_request port, ip_dest
+		puts "ARP_REQUEST|#{port.mac},FF:FF:FF:FF:FF:FF|#{port.ip},#{ip_dest}"
+		neighbors.each do |neighbor|
+			neighbor.receive_arp_request self, port, ip_dest
+		end
+
+	end
+
+	def receive_arp_request origin, origin_port, ip_dest
 		if has_ip ip_dest
 			port = get_port ip_dest
-			send_arp_reply port, origin
+			send_arp_reply port, origin, origin_port
 		end
 	end
 
-	def send_arp_reply port, origin
-		puts "ARP_REPLY|#{port.mac},#{origin.mac}|#{port.ip},#{origin.ip}"
-		origin.receive_arp_reply port
+	def send_arp_reply port, origin, origin_port
+		puts "ARP_REPLY|#{port.mac},#{origin_port.mac}|#{port.ip},#{origin_port.ip}"
+		arp_table[origin_port.ip] = origin_port.mac
+		origin.receive_arp_reply self, port
+	end
+
+	def receive_arp_reply origin, port
+		arp_table[port.ip] = port.mac
 	end
 
 	# ICMP

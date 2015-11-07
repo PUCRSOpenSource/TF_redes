@@ -33,7 +33,6 @@ class Node
 		if !arp_table.has_key?(destination)
 			send_arp_request destination
 		end
-
 		send_icmp_request ip, ip_dest, arp_table[destination], ttl
 	end
 
@@ -59,24 +58,24 @@ class Node
 	def send_arp_request ip_dest
 		puts "ARP_REQUEST|#{mac},FF:FF:FF:FF:FF:FF|#{ip},#{ip_dest}"
 		neighbors.each do |neighbor|
-			neighbor.receive_arp_request self, ip_dest
+			neighbor.receive_arp_request self, self, ip_dest
 		end
 	end
 
-	def receive_arp_request origin, ip_dest
+	def receive_arp_request origin, port, ip_dest
 		if ip == ip_dest
-			send_arp_reply origin
+			send_arp_reply origin, port
 		end
 	end
 
-	def send_arp_reply origin
-		puts "ARP_REPLY|#{mac},#{origin.mac}|#{ip},#{origin.ip}"
-		arp_table[origin.ip] = origin.mac
-		origin.receive_arp_reply self
+	def send_arp_reply origin, port
+		puts "ARP_REPLY|#{mac},#{port.mac}|#{ip},#{port.ip}"
+		arp_table[port.ip] = port.mac
+		origin.receive_arp_reply self, self
 	end
 
-	def receive_arp_reply origin
-		arp_table[origin.ip] = origin.mac
+	def receive_arp_reply origin, port
+		arp_table[port.ip] = port.mac
 	end
 
 	# ICMP
