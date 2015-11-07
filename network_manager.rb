@@ -49,11 +49,18 @@ class NetworkManager
 		node1.neighbors << node2
 	end
 
+	def setup_router_table
+		router_list = graph_nodes.select {|r| r.is_a? Router}
+		router_list.each do |r|
+			r.router_table = router_table
+		end
+	end
+
 	# Commands
 
 	def ping ip1, ip2
 		start_node = find_node ip1
-		start_node.send_message ip2
+		start_node.send_message ip2, 8
 	end
 
 	def find_node ip

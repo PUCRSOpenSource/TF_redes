@@ -51,7 +51,7 @@ File.open ARGV.first, "r" do |f|
 			rte.name     = line[0]
 			ip           = line[1].split '/'
 			rte.net_dest =   ip[0].strip
-			rte.prefix   =   ip[1]
+			rte.prefix   =   ip[1].to_i
 			rte.next_hop = line[2]
 			rte.port     = line[3]
 			rt.entry_list << rte
@@ -61,6 +61,7 @@ File.open ARGV.first, "r" do |f|
 	manager.graph_nodes = graph_nodes
 	manager.router_table = rt
 	manager.generate_graph
-	manager.ping "192.168.0.2", "192.168.0.3"
+	manager.setup_router_table
+	manager.ping "192.168.0.2", "192.168.1.3"
 end
 

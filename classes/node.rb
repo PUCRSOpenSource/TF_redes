@@ -18,7 +18,9 @@ class Node
 		@neighbors = Array.new
 	end
 
-	def send_message ip_dest
+	# Messages abstraction
+
+	def send_message ip_dest, ttl
 		dest_network = addr_to_network ip_dest, prefix
 		my_network = addr_to_network ip, prefix
 
@@ -32,7 +34,7 @@ class Node
 			send_arp_request destination
 		end
 
-		send_icmp_request ip, ip_dest, arp_table[destination]
+		send_icmp_request ip, ip_dest, arp_table[destination], ttl
 	end
 
 	def send_message_back ip_dest
@@ -49,7 +51,7 @@ class Node
 			send_arp_request destination
 		end
 
-		send_icmp_reply ip, ip_dest, arp_table[destination]
+		send_icmp_reply ip, ip_dest, arp_table[destination], 8
 	end
 
 	# ARP
@@ -69,30 +71,30 @@ class Node
 
 	def send_arp_reply origin
 		puts "ARP_REPLY|#{mac},#{origin.mac}|#{ip},#{origin.ip}"
+		arp_table[origin.ip] = origin.mac
 		origin.receive_arp_reply self
 	end
 
 	def receive_arp_reply origin
 		arp_table[origin.ip] = origin.mac
-		origin.arp_table[ip] = mac
 	end
 
 	# ICMP
 
-	def send_icmp_request ip_origin, ip_final, mac_next
-		puts "ICMP_REQUEST|#{mac},#{mac_next}|#{ip_origin},#{ip_final}"
+	def send_icmp_request ip_origin, ip_final, mac_next, ttl
+		puts "ICMP_ECHOREQUEST|#{mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
 		destination = find_neighboor mac_next
-		destination.receive_icmp_request ip_origin, ip_final
+		destination.receive_icmp_request ip_origin, ip_final, ttl - 1
 	end
 
-	def receive_icmp_request ip_origin, ip_final
+	def receive_icmp_request ip_origin, ip_final, ttl
 		if ip == ip_final
 			send_message_back ip_origin
 		end
 	end
 
-	def send_icmp_reply ip_origin, ip_final, mac_next
-		puts "ICMP_REPLY|#{mac},#{mac_next}|#{ip_origin},#{ip_final}"
+	def send_icmp_reply ip_origin, ip_final, mac_next, ttl
+		puts "ICMP_ECHOREPLY|#{mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
 		destination = find_neighboor mac_next
 		destination.receive_icmp_reply ip_origin, ip_final
 	end
