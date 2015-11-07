@@ -29,7 +29,6 @@ File.open ARGV.first, "r" do |f|
 			node.ip      =   ip[0].strip
 			node.prefix  =   ip[1].to_i
 			node.gateway = line[3].strip
-			node.neighbors = Array.new
 			graph_nodes << node
 		when 2 #when reading router
 			router       = Router.new
@@ -46,7 +45,6 @@ File.open ARGV.first, "r" do |f|
 				port_counter       += 2
 			end
 			router.ports = router_ports
-			router.neighbors = Array.new
 			graph_nodes << router
 		when 3 #when reading routertable
 			rte          = RouterTableEntry.new
@@ -63,6 +61,6 @@ File.open ARGV.first, "r" do |f|
 	manager.graph_nodes = graph_nodes
 	manager.router_table = rt
 	manager.generate_graph
-	manager.ping "192.168.0.2", "192.168.1.3"
+	manager.ping "192.168.0.2", "192.168.0.3"
 end
 

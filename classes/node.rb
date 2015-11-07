@@ -15,6 +15,7 @@ class Node
 
 	def initialize
 		@arp_table = Hash.new
+		@neighbors = Array.new
 	end
 
 	def send_message ip_dest
@@ -30,8 +31,11 @@ class Node
 		if !arp_table.has_key?(destination)
 			send_arp_request destination
 		end
-		puts arp_table[destination]
+
+		send_icmp_request arp_table[destination], ip_dest
 	end
+
+	# ARP
 
 	def send_arp_request ip_dest
 		puts "ARP_REQUEST|#{mac},FF:FF:FF:FF:FF:FF|#{ip},#{ip_dest}"
@@ -53,6 +57,44 @@ class Node
 
 	def receive_arp_reply origin
 		arp_table[origin.ip] = origin.mac
+	end
+
+	# ICMP
+
+	def send_icmp_request mac_next, ip_final
+		puts "ICMP_REQUEST|#{mac},#{mac_next}|#{ip},#{ip_final}"
+		destination = find_neighboor mac_next
+		puts destination
+		destination.receive_icmp_request self, ip_final
+	end
+
+	def receive_icmp_request origin, ip_final
+		if ip == ip_final
+			puts "é nos"
+		end
+	end
+
+	def send_icmp_reply
+	end
+
+	def receive_icmp_reply
+	end
+
+	# Auxiliar Functions
+
+	def find_neighboor mac
+		neighbors.each do |neigh|
+			if neigh.is_a? Node
+				if neigh.mac == mac
+					return neigh
+				end
+			else
+				if neigh.has_mac mac
+					return neigh
+				end
+			end
+		end
+		return nil
 	end
 
 end
