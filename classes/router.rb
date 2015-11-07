@@ -33,7 +33,25 @@ class Router
 		if !arp_table.has_key?(next_ip)
 			send_arp_request port, next_ip
 		end
+		send_icmp_request ip_origin, ip_dest, port.mac, arp_table[next_ip], ttl
+	end
 
+	def send_message_back ip_origin, ip_dest, ttl
+		# find next hop
+		if has_network ip_dest
+			port = find_port_by_net ip_dest
+			next_ip = ip_dest
+		else
+			# find next hop some other way
+			# port = ?
+			# next_ip = ?
+		end
+
+		# check arp table
+		if !arp_table.has_key?(next_ip)
+			send_arp_request port, next_ip
+		end
+		send_icmp_reply ip_origin, ip_dest, port.mac, arp_table[next_ip], ttl
 	end
 
 	# ARP
@@ -65,12 +83,26 @@ class Router
 
 	# ICMP
 
-	def send_icmp_request ip_origin, ip_final, mac_next, ttl
+	def send_icmp_request ip_origin, ip_final, port_mac, mac_next, ttl
+		puts "ICMP_ECHOREQUEST|#{port_mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
+		destination = find_neighboor mac_next
+		destination.receive_icmp_request ip_origin, ip_final, ttl - 1
+
 	end
 
 	def receive_icmp_request ip_origin, ip_final, ttl
 		# not considering ttl == 0 for now
 		send_message ip_origin, ip_final, ttl
+	end
+
+	def receive_icmp_reply ip_origin, ip_final, ttl
+		send_message_back ip_origin, ip_final, ttl
+	end
+
+	def send_icmp_reply ip_origin, ip_final, port_mac, mac_next, ttl
+		puts "ICMP_ECHOREPLY|#{port_mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
+		destination = find_neighboor mac_next
+		destination.receive_icmp_reply ip_origin, ip_final, ttl - 1
 	end
 
 	# Auxiliar Functions
@@ -119,6 +151,21 @@ class Router
 			ip_net = addr_to_network ip_dest, port.prefix
 			if port_net == ip_net
 				return port
+			end
+		end
+		return nil
+	end
+
+	def find_neighboor mac
+		neighbors.each do |neigh|
+			if neigh.is_a? Node
+				if neigh.mac == mac
+					return neigh
+				end
+			else
+				if neigh.has_mac mac
+					return neigh
+				end
 			end
 		end
 		return nil

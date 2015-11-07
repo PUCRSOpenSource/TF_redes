@@ -49,7 +49,6 @@ class Node
 		if !arp_table.has_key?(destination)
 			send_arp_request destination
 		end
-
 		send_icmp_reply ip, ip_dest, arp_table[destination], 8
 	end
 
@@ -95,10 +94,10 @@ class Node
 	def send_icmp_reply ip_origin, ip_final, mac_next, ttl
 		puts "ICMP_ECHOREPLY|#{mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
 		destination = find_neighboor mac_next
-		destination.receive_icmp_reply ip_origin, ip_final
+		destination.receive_icmp_reply ip_origin, ip_final, ttl - 1
 	end
 
-	def receive_icmp_reply ip_origin, ip_final
+	def receive_icmp_reply ip_origin, ip_final, ttl
 	end
 
 	# Auxiliar Functions
