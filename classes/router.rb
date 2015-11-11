@@ -89,6 +89,10 @@ class Router
 
 	def receive_icmp_request ip_origin, ip_final, ttl
 		# not considering ttl == 0 for now
+		if ttl == 0
+			puts "TTL 0"
+			return
+		end
 		send_message ip_origin, ip_final, ttl
 	end
 

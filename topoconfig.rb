@@ -62,6 +62,7 @@ File.open ARGV.first, "r" do |f|
 	manager.router_table = rt
 	manager.generate_graph
 	manager.setup_router_table
-	manager.ping "192.168.0.2", "192.168.0.162"
+	# manager.ping "192.168.0.2", "192.168.0.162"
+	manager.traceroute "192.168.0.2", "192.168.0.162"
 end
 

@@ -3,6 +3,18 @@ class NetworkManager
 	attr_accessor :graph_nodes
 	attr_accessor :router_table
 
+	# Used for traceroute
+
+	@@message_sent = false
+
+  	def self.set_flag(x)
+    	@@message_sent = x
+  	end
+
+  	def self.get_flag
+    	@@message_sent
+  	end
+
 	# Graph related functions
 
 	def generate_graph
@@ -61,6 +73,15 @@ class NetworkManager
 	def ping ip1, ip2
 		start_node = find_node ip1
 		start_node.send_message ip2, 8
+	end
+
+	def traceroute ip1, ip2
+		start_node = find_node ip1
+		ttl = 1
+		while !@@message_sent
+			start_node.send_message ip2, ttl
+			ttl = ttl + 1
+		end
 	end
 
 	def find_node ip

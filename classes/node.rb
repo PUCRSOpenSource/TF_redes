@@ -37,6 +37,7 @@ class Node
 	end
 
 	def send_message_back ip_dest
+
 		dest_network = addr_to_network ip_dest, prefix
 		my_network = addr_to_network ip, prefix
 
@@ -87,6 +88,7 @@ class Node
 
 	def receive_icmp_request ip_origin, ip_final, ttl
 		if ip == ip_final
+			NetworkManager.set_flag(true)
 			send_message_back ip_origin
 		end
 	end
