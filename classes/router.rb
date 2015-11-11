@@ -24,11 +24,9 @@ class Router
 			port = find_port_by_net ip_dest
 			next_ip = ip_dest
 		else
-			# find next hop some other way
-			# port = ?
-			# next_ip = ?
+			next_ip = router_table.find_nexthop self, ip_dest
+			port = find_port_by_net next_ip
 		end
-
 		# check arp table
 		if !arp_table.has_key?(next_ip)
 			send_arp_request port, next_ip
@@ -42,9 +40,8 @@ class Router
 			port = find_port_by_net ip_dest
 			next_ip = ip_dest
 		else
-			# find next hop some other way
-			# port = ?
-			# next_ip = ?
+			next_ip = router_table.find_nexthop self, ip_dest
+			port = find_port_by_net next_ip
 		end
 
 		# check arp table

@@ -20,7 +20,12 @@ class RouterTable
 				return entry.next_hop
 			end
 		end
-		return "anaue"
+		entries.each do |entry|
+			if entry.net_dest == "0.0.0.0"
+				return entry.next_hop
+			end
+		end
+		puts "router table error"
 	end
 
 end
