@@ -20,8 +20,8 @@ Ambos os nodos e roteadores possuem as mesmas funções principais, implementada
 Para utilizar o simulador é nescessário ter o Ruby instalado
 
 O formato do arquivo de entrada deve ser como no exemplo fornecido:
-
-`#NODE
+```
+#NODE
 n1,00:00:00:00:00:01,192.168.0.2/24,192.168.0.1
 n2,00:00:00:00:00:02,192.168.0.3/24,192.168.0.1
 n3,00:00:00:00:00:03,192.168.1.2/24,192.168.1.1
@@ -30,7 +30,8 @@ n4,00:00:00:00:00:04,192.168.1.3/24,192.168.1.1
 r1,2,00:00:00:00:00:05,192.168.0.1/24,00:00:00:00:00:06,192.168.1.1/24
 #ROUTERTABLE
 r1,192.168.0.0/24,0.0.0.0,0
-r1,192.168.1.0/24,0.0.0.0,1`
+r1,192.168.1.0/24,0.0.0.0,1
+```
 
 Para executar o programa é nescessário usar o comando:
 
@@ -48,6 +49,7 @@ A maior dificuldade durante a implementação foi saber quando trabalhar com por
 
 Os exemplos serão executados sobre uma topologia mostrada em aula durante uma das aulas de implementação, ele utiliza 3 nodos e 3 roteadores. Segue a especificação no formato de entrada do programa:
 
+```
 #NODE
 n1,00:00:00:00:00:01,192.168.0.2/27,192.168.0.1
 n2,00:00:00:00:00:02,192.168.0.66/27,192.168.0.65
@@ -69,9 +71,11 @@ r3,192.168.0.160/27,0.0.0.0,0
 r3,192.168.0.96/27,0.0.0.0,1
 r3,192.168.0.128/27,0.0.0.0,2
 r3,0.0.0.0/0,192.168.0.98,1
+```
 
 Seguem os resultados:
 
+```
 ruby topoconfig.rb input/in3 ping 192.168.0.2 192.168.0.162
 
 ARP_REQUEST|00:00:00:00:00:01,FF:FF:FF:FF:FF:FF|192.168.0.2,192.168.0.1
@@ -91,7 +95,8 @@ ARP_REQUEST|00:00:00:00:00:A5,FF:FF:FF:FF:FF:FF|192.168.0.97,192.168.0.98
 ARP_REPLY|00:00:00:00:00:A6,00:00:00:00:00:A5|192.168.0.98,192.168.0.97
 ICMP_ECHOREPLY|00:00:00:00:00:A5,00:00:00:00:00:A6|192.168.0.162,192.168.0.2|7
 ICMP_ECHOREPLY|00:00:00:00:00:11,00:00:00:00:00:01|192.168.0.162,192.168.0.2|6
-
+```
+```
 ruby topoconfig.rb input/in3 traceroute 192.168.0.2 192.168.0.162
 
 ARP_REQUEST|00:00:00:00:00:01,FF:FF:FF:FF:FF:FF|192.168.0.2,192.168.0.1
@@ -123,4 +128,5 @@ ICMP_ECHOREQUEST|00:00:00:00:00:13,00:00:00:00:00:03|192.168.0.2,192.168.0.162|1
 ICMP_ECHOREPLY|00:00:00:00:00:03,00:00:00:00:00:13|192.168.0.162,192.168.0.2|8
 ICMP_ECHOREPLY|00:00:00:00:00:A5,00:00:00:00:00:A6|192.168.0.162,192.168.0.2|7
 ICMP_ECHOREPLY|00:00:00:00:00:11,00:00:00:00:00:01|192.168.0.162,192.168.0.2|6
+```
 
