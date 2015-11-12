@@ -51,6 +51,23 @@ class Router
 		send_icmp_reply ip_origin, ip_dest, port.mac, arp_table[next_ip], ttl
 	end
 
+	def send_error_message ip_origin, ip_dest, ttl
+		# find next hop
+		if has_network ip_dest
+			port = find_port_by_net ip_dest
+			next_ip = ip_dest
+		else
+			next_ip = router_table.find_nexthop self, ip_dest
+			port = find_port_by_net next_ip
+		end
+
+		# check arp table
+		if !arp_table.has_key?(next_ip)
+			send_arp_request port, next_ip
+		end
+		send_timeout_message ip_origin, ip_dest, port.mac, arp_table[next_ip], ttl
+	end
+
 	# ARP
 
 	def send_arp_request port, ip_dest
@@ -88,9 +105,9 @@ class Router
 	end
 
 	def receive_icmp_request ip_origin, ip_final, ttl
-		# not considering ttl == 0 for now
 		if ttl == 0
-			puts "TTL 0"
+			port_origin = find_port_origin ip_origin
+			send_error_message port_origin.ip, ip_origin, 8
 			return
 		end
 		send_message ip_origin, ip_final, ttl
@@ -104,6 +121,18 @@ class Router
 		puts "ICMP_ECHOREPLY|#{port_mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
 		destination = find_neighboor mac_next
 		destination.receive_icmp_reply ip_origin, ip_final, ttl - 1
+	end
+
+	# TIMEEXCEEDED
+
+	def send_timeout_message ip_origin, ip_final, port_mac, mac_next, ttl
+		puts "ICMP_TIMEEXCEEDED|#{port_mac},#{mac_next}|#{ip_origin},#{ip_final}|#{ttl}"
+		destination = find_neighboor mac_next
+		destination.receive_timeout_message ip_origin, ip_final, ttl - 1
+	end
+
+	def receive_timeout_message ip_origin, ip_final, ttl
+		send_error_message ip_origin, ip_final, ttl
 	end
 
 	# Auxiliar Functions
@@ -170,6 +199,18 @@ class Router
 			end
 		end
 		return nil
+	end
+
+	def find_port_origin ip_final
+		# find next hop
+		if has_network ip_final
+			port = find_port_by_net ip_final
+			next_ip = ip_final
+		else
+			next_ip = router_table.find_nexthop self, ip_final
+			port = find_port_by_net next_ip
+		end
+		return port
 	end
 
 end

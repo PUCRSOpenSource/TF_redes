@@ -13,7 +13,7 @@ rt = RouterTable.new
 graph_nodes = Array.new
 counter = 0
 
-File.open ARGV.first, "r" do |f|
+File.open ARGV[0], "r" do |f|
 	f.each_line do |line|
 		if line[0] == "#"
 			counter += 1
@@ -62,7 +62,11 @@ File.open ARGV.first, "r" do |f|
 	manager.router_table = rt
 	manager.generate_graph
 	manager.setup_router_table
-	# manager.ping "192.168.0.2", "192.168.0.162"
-	manager.traceroute "192.168.0.2", "192.168.0.162"
+
+	if ARGV[1] == 'ping'
+		manager.ping ARGV[2], ARGV[3]
+	elsif ARGV[1] == 'traceroute'
+		manager.traceroute ARGV[2], ARGV[3]
+	end
 end
 

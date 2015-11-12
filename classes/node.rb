@@ -102,6 +102,12 @@ class Node
 	def receive_icmp_reply ip_origin, ip_final, ttl
 	end
 
+	# TIMEOUT
+
+	def receive_timeout_message ip_origin, ip_final, ttl
+		
+	end
+
 	# Auxiliar Functions
 
 	def find_neighboor mac

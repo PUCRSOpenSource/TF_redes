@@ -11,7 +11,6 @@ class RouterTable
 		"#{entry_list.join}" #WHY DOES IT PRINT BEAUTIFULLY IN A NEW LINES??????
 	end
 
-	# incomplete
 	def find_nexthop router, ip_dest
 		entries = entry_list.select {|r| r.name == router.name}
 		entries.each do |entry|
