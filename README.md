@@ -11,7 +11,32 @@ Este trabalho trata de desenvolver um simulador de rede que execute os comandos 
 
 O simulador foi desenvolvido na linguagem de programação Ruby. Sua estrutura interna consiste de um grafo de roteadores e nodos que são ligados quando possuem redes em comum.
 
-Ambos os nodos e roteadores possuem as mesmas funções principais, implementadas diferentemente, porém com o mesmo nome, para que possam ser chamadas independende se estivermos tratando de um roteador ou de um nodo.
+Ambos os nodos e roteadores possuem as mesmas funções principais, implementadas diferentemente, porém com o mesmo nome, para que possam ser chamadas independende se estivermos tratando de um roteador ou de um nodo. Existe uma função para enviar e uma função para receber cada uma das mensagens, por exemplo `send_arp_request` e `receive_arp_request`.
+
+Além disso também existe uma função para enviar uma mensagem, que complementa estas outras. No caso para um nodo enviar uma mensagem a função é a seguinte:
+
+```ruby
+def send_message ip_dest, ttl
+	# get networks
+	dest_network = addr_to_network ip_dest, prefix
+	my_network = addr_to_network ip, prefix
+
+	# find next ip
+	if dest_network == my_network
+		destination = ip_dest
+	else
+		destination = gateway
+	end
+
+	# check arp table
+	if !arp_table.has_key?(destination)
+		send_arp_request destination
+	end
+
+	# send message
+	send_icmp_request ip, ip_dest, arp_table[destination], ttl
+end
+```
 
 ---
 
